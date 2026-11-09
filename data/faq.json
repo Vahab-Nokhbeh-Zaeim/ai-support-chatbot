@@ -1,0 +1,10 @@
+[
+  {"question": "How long does shipping take?", "answer": "Orders inside Iran are delivered in 2 to 4 business days. Express delivery in Tehran takes 24 hours."},
+  {"question": "How much does shipping cost?", "answer": "Shipping is free for orders over 2,000,000 Toman. Smaller orders have a flat shipping fee of 80,000 Toman."},
+  {"question": "Can I return a product?", "answer": "Yes. You can return any unused product within 7 days of delivery. Contact support with your order number to start a return."},
+  {"question": "How do I track my order?", "answer": "After your order ships you will receive a tracking code by SMS. You can also see the status on the My Orders page."},
+  {"question": "Which payment methods do you accept?", "answer": "We accept all Shetab bank cards through our online payment gateway, and cash on delivery in selected cities."},
+  {"question": "What are your support hours?", "answer": "Our support team is available Saturday to Thursday from 9 AM to 9 PM."},
+  {"question": "Do products have a warranty?", "answer": "All electronic products come with an 18-month official warranty. The warranty card is included in the box."},
+  {"question": "Can I change or cancel my order?", "answer": "You can change or cancel an order until it ships. Use the My Orders page or contact support as soon as possible."}
+]
