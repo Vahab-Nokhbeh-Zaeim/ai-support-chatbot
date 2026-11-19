@@ -6,5 +6,14 @@
   {"question": "Which payment methods do you accept?", "answer": "We accept all Shetab bank cards through our online payment gateway, and cash on delivery in selected cities."},
   {"question": "What are your support hours?", "answer": "Our support team is available Saturday to Thursday from 9 AM to 9 PM."},
   {"question": "Do products have a warranty?", "answer": "All electronic products come with an 18-month official warranty. The warranty card is included in the box."},
-  {"question": "Can I change or cancel my order?", "answer": "You can change or cancel an order until it ships. Use the My Orders page or contact support as soon as possible."}
+  {"question": "Can I change or cancel my order?", "answer": "You can change or cancel an order until it ships. Use the My Orders page or contact support as soon as possible."},
+
+  {"question": "ارسال سفارش چقدر طول می‌کشد؟", "answer": "سفارش‌های داخل ایران ظرف ۲ تا ۴ روز کاری ارسال می‌شوند. ارسال اکسپرس در تهران ۲۴ ساعته است."},
+  {"question": "هزینه ارسال چقدر است؟", "answer": "ارسال برای سفارش‌های بالای ۲ میلیون تومان رایگان است. هزینه ارسال سفارش‌های کمتر، ۸۰ هزار تومان است."},
+  {"question": "آیا امکان مرجوع کردن کالا وجود دارد؟", "answer": "بله. هر کالای استفاده‌نشده را تا ۷ روز پس از تحویل می‌توانید مرجوع کنید. برای شروع مرجوعی، با شماره سفارش به پشتیبانی پیام دهید."},
+  {"question": "چطور سفارشم را پیگیری کنم؟", "answer": "بعد از ارسال سفارش، کد رهگیری برایتان پیامک می‌شود. وضعیت سفارش را در صفحه «سفارش‌های من» هم می‌توانید ببینید."},
+  {"question": "چه روش‌های پرداختی دارید؟", "answer": "پرداخت آنلاین با همه کارت‌های بانکی عضو شتاب از طریق درگاه اینترنتی، و پرداخت در محل در شهرهای منتخب."},
+  {"question": "ساعت کاری پشتیبانی چیست؟", "answer": "پشتیبانی شنبه تا پنجشنبه از ساعت ۹ صبح تا ۹ شب پاسخگو است."},
+  {"question": "آیا محصولات گارانتی دارند؟", "answer": "همه محصولات الکترونیکی ۱۸ ماه گارانتی رسمی دارند و کارت گارانتی داخل جعبه است."},
+  {"question": "می‌توانم سفارشم را تغییر یا لغو کنم؟", "answer": "تا قبل از ارسال، امکان تغییر یا لغو سفارش وجود دارد. از صفحه «سفارش‌های من» یا با پیام به پشتیبانی اقدام کنید."}
 ]
