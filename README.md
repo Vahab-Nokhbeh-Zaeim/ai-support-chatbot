@@ -7,6 +7,7 @@ A customer-support chatbot API built with **FastAPI**. It answers questions from
 ## Features
 
 - **RAG pipeline**: TF-IDF retrieval over a JSON knowledge base, implemented from scratch
+- **Persian and English**: a bilingual FAQ, Persian text normalization (Arabic ي/ك, half-spaces, Persian digits, plural endings) and replies in the customer's language
 - Works with **any OpenAI-compatible API** (OpenAI, local models, other providers)
 - **Offline mode**: without an API key the bot answers with the best matching FAQ entry
 - Short per-session conversation memory
@@ -66,6 +67,24 @@ curl -X POST http://127.0.0.1:8000/chat \
   "mode": "offline"
 }
 ```
+
+### Persian example
+
+```bash
+curl -X POST http://127.0.0.1:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "میخوام کالا رو مرجوع کنم"}'
+```
+
+```json
+{
+  "answer": "بله. هر کالای استفاده‌نشده را تا ۷ روز پس از تحویل می‌توانید مرجوع کنید...",
+  "sources": ["آیا امکان مرجوع کردن کالا وجود دارد؟"],
+  "mode": "offline"
+}
+```
+
+The retriever normalizes Persian text before matching, so `پيگيري` (Arabic keyboard), `پیگیری`, `سفارش‌ها` and `سفارشها` all find the same entries.
 
 ## Docker
 

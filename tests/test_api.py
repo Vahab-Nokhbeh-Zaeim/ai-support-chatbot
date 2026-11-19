@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from app.chat import FALLBACK, ChatService
+from app.chat import FALLBACK, FALLBACK_FA, ChatService
 from app.knowledge import Entry, KnowledgeBase
 from app.main import create_app
 
@@ -37,6 +37,29 @@ def test_offline_mode_falls_back_when_nothing_matches():
     client = TestClient(create_app(ChatService(make_kb())))
     body = client.post("/chat", json={"message": "tell me a joke about cats"}).json()
     assert body["answer"] == FALLBACK
+
+
+def test_persian_question_gets_persian_answer_offline():
+    kb = KnowledgeBase([
+        Entry("Can I return a product?", "Returns are accepted within 7 days."),
+        Entry("آیا امکان مرجوع کردن کالا وجود دارد؟", "بله، تا ۷ روز پس از تحویل."),
+    ])
+    client = TestClient(create_app(ChatService(kb)))
+    body = client.post("/chat", json={"message": "میخوام کالا رو مرجوع کنم"}).json()
+    assert body["answer"] == "بله، تا ۷ روز پس از تحویل."
+
+
+def test_persian_fallback_when_nothing_matches():
+    client = TestClient(create_app(ChatService(make_kb())))
+    body = client.post("/chat", json={"message": "سلام خوبی؟"}).json()
+    assert body["answer"] == FALLBACK_FA
+
+
+def test_system_prompt_asks_for_same_language():
+    model = FakeModel()
+    client = TestClient(create_app(ChatService(make_kb(), model)))
+    client.post("/chat", json={"message": "shipping?"})
+    assert "same language" in model.calls[0][0]["content"]
 
 
 def test_llm_mode_sends_context_and_keeps_history():

@@ -3,15 +3,21 @@
 from collections import defaultdict, deque
 from dataclasses import dataclass
 
-from .knowledge import KnowledgeBase, Match
+from .knowledge import KnowledgeBase, Match, is_persian
 from .llm import ChatModel
 
 SYSTEM_PROMPT = (
     "You are a friendly customer support assistant. Answer only from the provided context. "
     "If the context does not contain the answer, say you are not sure and offer to connect "
-    "the customer with a human agent. Keep answers short and clear."
+    "the customer with a human agent. Keep answers short and clear. "
+    "Always reply in the same language as the customer's last message."
 )
 FALLBACK = "I'm not sure about that one. Would you like me to connect you with a human agent?"
+FALLBACK_FA = "در این مورد مطمئن نیستم. می‌خواهید شما را به همکاران پشتیبانی وصل کنم؟"
+
+
+def fallback_for(message: str) -> str:
+    return FALLBACK_FA if is_persian(message) else FALLBACK
 
 
 @dataclass
@@ -32,7 +38,7 @@ class ChatService:
         sources = [match.entry.question for match in matches]
 
         if self.model is None:
-            answer = matches[0].entry.answer if matches else FALLBACK
+            answer = matches[0].entry.answer if matches else fallback_for(message)
             return Reply(answer, sources[:1], "offline")
 
         history = self._history[session_id]
