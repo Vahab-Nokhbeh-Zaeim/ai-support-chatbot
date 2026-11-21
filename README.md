@@ -12,6 +12,7 @@ A customer-support chatbot API built with **FastAPI**. It answers questions from
 - **Offline mode**: without an API key the bot answers with the best matching FAQ entry
 - Short per-session conversation memory
 - Returns the source questions used for every answer
+- **Unanswered-questions log**: questions the FAQ cannot answer are saved to a file and ranked, so you know which entries to add next
 - Input validation with Pydantic, auto-generated OpenAPI docs
 - Docker support and automated tests
 
@@ -45,6 +46,7 @@ Open http://127.0.0.1:8000/docs for the interactive API docs.
 | `OPENAI_MODEL` | `gpt-4o-mini` | Model name |
 | `OPENAI_BASE_URL` | `https://api.openai.com/v1` | Any OpenAI-compatible endpoint |
 | `FAQ_PATH` | `data/faq.json` | Path to the knowledge base |
+| `UNANSWERED_LOG` | `data/unanswered.jsonl` | Where unanswered questions are saved. Set it to an empty value to turn the log off |
 
 ## API
 
@@ -52,6 +54,7 @@ Open http://127.0.0.1:8000/docs for the interactive API docs.
 |---|---|---|
 | `GET` | `/health` | Service status and mode (`llm` or `offline`) |
 | `POST` | `/chat` | Ask a question |
+| `GET` | `/unanswered?limit=20` | Most common questions the FAQ could not answer |
 | `DELETE` | `/chat/{session_id}` | Clear a session's history |
 
 ```bash
@@ -85,6 +88,28 @@ curl -X POST http://127.0.0.1:8000/chat \
 ```
 
 The retriever normalizes Persian text before matching, so `پيگيري` (Arabic keyboard), `پیگیری`, `سفارش‌ها` and `سفارشها` all find the same entries.
+
+## Improving the FAQ with unanswered questions
+
+When no FAQ entry matches a question, it is appended to `data/unanswered.jsonl` (one JSON object per line, Persian text stored as readable UTF-8):
+
+```json
+{"time": "2026-11-21T09:30:12+00:00", "language": "fa", "message": "کارت هدیه دارید؟"}
+```
+
+`GET /unanswered` groups questions that differ only in spelling, punctuation or keyboard (`كارت هديه` and `کارت هدیه دارید؟` count as one) and lists the most frequent first:
+
+```json
+{
+  "total": 3,
+  "questions": [
+    {"question": "كارت هديه داريد", "count": 2, "language": "fa", "last_asked": "2026-11-21T09:41:03+00:00"},
+    {"question": "Is there a store in Tabriz?", "count": 1, "language": "en", "last_asked": "2026-11-21T09:35:47+00:00"}
+  ]
+}
+```
+
+Only the question text, its language and the time are stored, with no session IDs or personal data. The log file is git-ignored.
 
 ## Docker
 

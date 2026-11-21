@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from .knowledge import KnowledgeBase, Match, is_persian
 from .llm import ChatModel
+from .unanswered import UnansweredLog
 
 SYSTEM_PROMPT = (
     "You are a friendly customer support assistant. Answer only from the provided context. "
@@ -28,14 +29,23 @@ class Reply:
 
 
 class ChatService:
-    def __init__(self, knowledge: KnowledgeBase, model: ChatModel | None = None, history_size: int = 6) -> None:
+    def __init__(
+        self,
+        knowledge: KnowledgeBase,
+        model: ChatModel | None = None,
+        history_size: int = 6,
+        unanswered: UnansweredLog | None = None,
+    ) -> None:
         self.knowledge = knowledge
         self.model = model
+        self.unanswered = unanswered
         self._history: dict[str, deque] = defaultdict(lambda: deque(maxlen=history_size))
 
     def ask(self, session_id: str, message: str) -> Reply:
         matches = self.knowledge.search(message)
         sources = [match.entry.question for match in matches]
+        if not matches and self.unanswered is not None:
+            self.unanswered.record(message)
 
         if self.model is None:
             answer = matches[0].entry.answer if matches else fallback_for(message)

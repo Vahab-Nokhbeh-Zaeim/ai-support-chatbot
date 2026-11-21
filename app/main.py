@@ -3,14 +3,16 @@
 import os
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from .chat import ChatService
 from .knowledge import KnowledgeBase
 from .llm import OpenAIChatModel
+from .unanswered import UnansweredLog
 
 DEFAULT_FAQ = Path(__file__).resolve().parent.parent / "data" / "faq.json"
+DEFAULT_UNANSWERED_LOG = Path(__file__).resolve().parent.parent / "data" / "unanswered.jsonl"
 
 
 class ChatRequest(BaseModel):
@@ -24,6 +26,18 @@ class ChatResponse(BaseModel):
     mode: str
 
 
+class UnansweredItem(BaseModel):
+    question: str
+    count: int
+    language: str
+    last_asked: str
+
+
+class UnansweredReport(BaseModel):
+    total: int
+    questions: list[UnansweredItem]
+
+
 def build_service() -> ChatService:
     knowledge = KnowledgeBase.from_file(os.environ.get("FAQ_PATH", DEFAULT_FAQ))
     api_key = os.environ.get("OPENAI_API_KEY")
@@ -34,7 +48,10 @@ def build_service() -> ChatService:
             model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
             base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
         )
-    return ChatService(knowledge, model)
+    # Set UNANSWERED_LOG to an empty value to turn the log off.
+    log_path = os.environ.get("UNANSWERED_LOG", str(DEFAULT_UNANSWERED_LOG))
+    unanswered = UnansweredLog(log_path) if log_path else None
+    return ChatService(knowledge, model, unanswered=unanswered)
 
 
 def create_app(service: ChatService | None = None) -> FastAPI:
@@ -49,6 +66,17 @@ def create_app(service: ChatService | None = None) -> FastAPI:
     def chat(request: ChatRequest) -> ChatResponse:
         reply = chat_service.ask(request.session_id, request.message.strip())
         return ChatResponse(answer=reply.answer, sources=reply.sources, mode=reply.mode)
+
+    @app.get("/unanswered", response_model=UnansweredReport)
+    def unanswered(limit: int = Query(default=20, ge=1, le=200)) -> UnansweredReport:
+        log = chat_service.unanswered
+        if log is None:
+            raise HTTPException(status_code=404, detail="The unanswered-questions log is turned off")
+        questions = log.summary(limit)
+        return UnansweredReport(
+            total=len(log.entries()),
+            questions=[UnansweredItem(**vars(question)) for question in questions],
+        )
 
     @app.delete("/chat/{session_id}", status_code=204)
     def reset(session_id: str) -> None:
