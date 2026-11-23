@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .chat import ChatService
@@ -13,6 +15,7 @@ from .unanswered import UnansweredLog
 
 DEFAULT_FAQ = Path(__file__).resolve().parent.parent / "data" / "faq.json"
 DEFAULT_UNANSWERED_LOG = Path(__file__).resolve().parent.parent / "data" / "unanswered.jsonl"
+STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 
 class ChatRequest(BaseModel):
@@ -57,6 +60,11 @@ def build_service() -> ChatService:
 def create_app(service: ChatService | None = None) -> FastAPI:
     app = FastAPI(title="AI Support Chatbot", version="1.0.0")
     chat_service = service or build_service()
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+    @app.get("/", include_in_schema=False)
+    def chat_page() -> FileResponse:
+        return FileResponse(STATIC_DIR / "index.html")
 
     @app.get("/health")
     def health() -> dict:
@@ -64,7 +72,11 @@ def create_app(service: ChatService | None = None) -> FastAPI:
 
     @app.post("/chat", response_model=ChatResponse)
     def chat(request: ChatRequest) -> ChatResponse:
-        reply = chat_service.ask(request.session_id, request.message.strip())
+        message = request.message.strip()
+        session_id = request.session_id.strip()
+        if not message or not session_id:
+            raise HTTPException(status_code=422, detail="message and session_id must not be blank")
+        reply = chat_service.ask(session_id, message)
         return ChatResponse(answer=reply.answer, sources=reply.sources, mode=reply.mode)
 
     @app.get("/unanswered", response_model=UnansweredReport)

@@ -36,7 +36,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Open http://127.0.0.1:8000/docs for the interactive API docs.
+Open http://127.0.0.1:8000 for the bilingual chat page, or http://127.0.0.1:8000/docs for the interactive API docs. The chat page uses the same `/chat`, `/health` and session-reset endpoints as the API.
 
 ### Configuration
 

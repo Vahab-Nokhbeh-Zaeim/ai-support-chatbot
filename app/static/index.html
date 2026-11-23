@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b2c">
+  <meta name="description" content="گفت‌وگو با دستیار پشتیبانی هوشمند">
+  <title>دستیار پشتیبانی | گفتگو</title>
+  <link rel="stylesheet" href="/static/chat.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="صفحه اصلی">
+        <span class="brand-mark" aria-hidden="true">✳</span>
+        <span><strong data-i18n="brand">همراه پشتیبانی</strong><small data-i18n="brandNote">پاسخ‌گو، هر زمان</small></span>
+      </a>
+      <div class="topbar-actions">
+        <span class="mode-pill" id="mode-pill" data-i18n="connecting">در حال اتصال…</span>
+        <button class="icon-button" id="language-toggle" type="button" aria-label="Switch language">EN</button>
+      </div>
+    </header>
+
+    <section class="chat-layout" aria-label="Support chat">
+      <aside class="intro-panel">
+        <span class="eyebrow" data-i18n="eyebrow">پشتیبانی هوشمند</span>
+        <h1 data-i18n="headline">چطور می‌توانیم کمکتان کنیم؟</h1>
+        <p data-i18n="intro">سؤالتان را بنویسید؛ دستیار از راهنمای پشتیبانی پاسخ می‌دهد و اگر مطمئن نباشد، صادقانه می‌گوید.</p>
+        <div class="quick-questions" aria-label="Suggested questions">
+          <p data-i18n="suggestions">برای شروع، یکی از این‌ها را بپرسید</p>
+          <button type="button" class="suggestion" data-question-fa="چطور سفارشم را پیگیری کنم؟" data-question-en="How can I track my order?">چطور سفارشم را پیگیری کنم؟ <span aria-hidden="true">↗</span></button>
+          <button type="button" class="suggestion" data-question-fa="شرایط مرجوعی کالا چیست؟" data-question-en="What is your return policy?">شرایط مرجوعی کالا چیست؟ <span aria-hidden="true">↗</span></button>
+          <button type="button" class="suggestion" data-question-fa="هزینه ارسال چقدر است؟" data-question-en="How much is shipping?">هزینه ارسال چقدر است؟ <span aria-hidden="true">↗</span></button>
+        </div>
+        <p class="privacy-note"><span aria-hidden="true">◉</span> <span data-i18n="privacy">این گفت‌وگو فقط برای پاسخ‌گویی استفاده می‌شود.</span></p>
+      </aside>
+
+      <section class="chat-card" aria-label="Chat window">
+        <div class="chat-card-head">
+          <div class="assistant-avatar" aria-hidden="true">✳</div>
+          <div><strong data-i18n="assistant">دستیار پشتیبانی</strong><span class="online"><i></i><span data-i18n="online">آماده پاسخ‌گویی</span></span></div>
+          <button class="reset-button" id="reset-chat" type="button" data-i18n="newChat">گفت‌وگوی تازه</button>
+        </div>
+        <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions text">
+          <article class="message message--assistant">
+            <div class="message-bubble" data-i18n="welcome">سلام! من دستیار پشتیبانی هستم. درباره سفارش، ارسال یا محصولات هر سؤالی دارید بپرسید.</div>
+            <time data-i18n="now">همین حالا</time>
+          </article>
+        </div>
+        <p class="chat-error" id="chat-error" role="alert" hidden></p>
+        <form class="composer" id="chat-form">
+          <label class="visually-hidden" for="message-input" data-i18n="inputLabel">پیام شما</label>
+          <textarea id="message-input" name="message" rows="1" maxlength="1000" required placeholder="پیامتان را اینجا بنویسید…" data-i18n-placeholder="placeholder"></textarea>
+          <button class="send-button" id="send-button" type="submit" aria-label="Send message"><span data-i18n="send">ارسال</span><span aria-hidden="true">↑</span></button>
+        </form>
+        <p class="composer-note" data-i18n="composerNote">Enter برای ارسال · Shift + Enter برای خط جدید</p>
+      </section>
+    </section>
+    <footer class="footer"><span data-i18n="footer">پاسخ‌ها بر اساس اطلاعات راهنمای پشتیبانی ارائه می‌شوند.</span><a href="/docs" data-i18n="apiDocs">مستندات API</a></footer>
+  </main>
+  <script src="/static/chat.js" defer></script>
+</body>
+</html>

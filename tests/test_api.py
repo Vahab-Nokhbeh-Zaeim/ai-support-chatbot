@@ -88,3 +88,32 @@ def test_reset_clears_history():
 def test_empty_message_is_rejected():
     client = TestClient(create_app(ChatService(make_kb())))
     assert client.post("/chat", json={"message": ""}).status_code == 422
+
+
+def test_whitespace_message_is_rejected_without_logging(tmp_path):
+    from app.unanswered import UnansweredLog
+
+    log = UnansweredLog(tmp_path / "unanswered.jsonl")
+    client = TestClient(create_app(ChatService(make_kb(), unanswered=log)))
+    response = client.post("/chat", json={"message": "   "})
+    assert response.status_code == 422
+    assert log.entries() == []
+
+
+def test_blank_session_id_is_rejected():
+    client = TestClient(create_app(ChatService(make_kb())))
+    assert client.post("/chat", json={"message": "shipping", "session_id": "   "}).status_code == 422
+
+
+def test_homepage_serves_chat_interface():
+    client = TestClient(create_app(ChatService(make_kb())))
+    response = client.get("/")
+    assert response.status_code == 200
+    assert 'id="chat-form"' in response.text
+    assert "/static/chat.js" in response.text
+
+
+def test_chat_page_assets_are_served():
+    client = TestClient(create_app(ChatService(make_kb())))
+    assert client.get("/static/chat.css").status_code == 200
+    assert client.get("/static/chat.js").status_code == 200
