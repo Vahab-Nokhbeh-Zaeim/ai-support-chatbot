@@ -91,7 +91,7 @@ The retriever normalizes Persian text before matching, so `پيگيري` (Arabic
 
 ## Improving the FAQ with unanswered questions
 
-When no FAQ entry matches a question, it is appended to `data/unanswered.jsonl` (one JSON object per line, Persian text stored as readable UTF-8):
+When the retriever finds no matching FAQ entry, the original message is appended to `data/unanswered.jsonl` (one JSON object per line, Persian text stored as readable UTF-8). This happens in both offline and LLM mode; an LLM answer that is uncertain is not logged when the retriever found a match:
 
 ```json
 {"time": "2026-11-21T09:30:12+00:00", "language": "fa", "message": "کارت هدیه دارید؟"}
@@ -109,7 +109,7 @@ When no FAQ entry matches a question, it is appended to `data/unanswered.jsonl` 
 }
 ```
 
-Only the question text, its language and the time are stored, with no session IDs or personal data. The log file is git-ignored.
+Each entry stores the original message text, its detected language and a UTC timestamp. Session IDs are not stored, but message text is kept as submitted and may contain personal information. Do not include passwords, payment details or other sensitive information in chat messages. Set `UNANSWERED_LOG` to an empty value to disable the log. The log file is git-ignored, and `DELETE /chat/{session_id}` clears only in-memory conversation history; it does not erase logged questions.
 
 ## Docker
 
